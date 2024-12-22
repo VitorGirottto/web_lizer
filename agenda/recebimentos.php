@@ -5,6 +5,17 @@ session_start();
 require '../principal/autenticar.php';
 
 $agendamento = null;
+$tipos_recebimento = [];
+
+// Recupera os tipos de recebimento
+try {
+    $sql = "SELECT id, descricao FROM tipo_recebimento";
+    $stmt = $conn->query($sql);
+    $tipos_recebimento = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    echo "Erro ao buscar tipos de recebimento: " . $e->getMessage();
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
@@ -90,6 +101,7 @@ if (isset($_GET['id'])) {
     <meta charset="UTF-8">
     <title>Recebimento</title>
     <style>
+        /* Adicionar seu CSS aqui */
     </style>
 </head>
 <body>
@@ -114,9 +126,9 @@ if (isset($_GET['id'])) {
         
         <label for="tipo_id">Tipo de Pagamento:</label>
         <select name="tipo_id" id="tipo_id" required>
-            <option value="1">Dinheiro</option>
-            <option value="2">Cartão de Crédito</option>
-            <option value="3">Transferência Bancária</option>
+            <?php foreach ($tipos_recebimento as $tipo): ?>
+                <option value="<?php echo $tipo['id']; ?>"><?php echo htmlspecialchars($tipo['descricao']); ?></option>
+            <?php endforeach; ?>
         </select>
         
         <label for="descricao">Descrição:</label>
