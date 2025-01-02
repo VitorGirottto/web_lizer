@@ -1,4 +1,3 @@
-
 <?php
 require '../banco/conexao.php';
 
